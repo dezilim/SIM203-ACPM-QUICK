@@ -63,7 +63,7 @@ ListOfCities* citiesReader(int popMin, int dep, bool bigOnly, int offset, FILE* 
     } 
     fseek(inputFile, 0, SEEK_SET);
     // expect 94 total cities since department 20 is excluded 
-    printf("JUUST CHECKKKING , CITIES NUMBER : = %i\n\n\n", cities->number);
+    //printf("JUUST CHECKKKING , CITIES NUMBER : = %i\n\n\n", cities->number);
 
     // Allocate arrays
     cities->name = malloc(cities->number*sizeof(char*));

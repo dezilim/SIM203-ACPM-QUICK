@@ -4,6 +4,7 @@
 #include <string.h>
 #include <math.h>
 #include "citiesReader.h"
+#include <omp.h>
 
 #define R 6378
 #define p 0.017453292519943295 // pi/180
@@ -134,13 +135,13 @@ int* primalgo2(ListOfCities* cities){
         
     }
 
-    printf("\n___________End of Prim's Algorithm___________ \n"); 
-    printf("Result:\n");
-    printf("Parent ----- Distance ------- City\n");
+    // printf("\n___________End of Prim's Algorithm___________ \n"); 
+    // printf("Result:\n");
+    // printf("Parent ----- Distance ------- City\n");
 
-    for(int v = 1; v< V; v++){
-        printf("[%d] ------- %f ------- [%d]\n", parent[v], x_ij(cities, v, parent[v]), v);
-    }
+    // for(int v = 1; v< V; v++){
+    //     printf("[%d] ------- %f ------- [%d]\n", parent[v], x_ij(cities, v, parent[v]), v);
+    // }
 
     // parent[0] is not used since the first node has no parent! Use it to store the total weight of the reslut :-)
     for(int v = 0; v < V; v++){

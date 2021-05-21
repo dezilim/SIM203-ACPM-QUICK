@@ -1,5 +1,8 @@
 // Compilation:
-//   icc -std=c99 main.c citiesReader.c prim.c
+//   icc -qopenmp -O0 -std=c99 -mkl main.c citiesReader.c prim2.c
+//   icc -qopenmp -O1 -std=c99 -mkl main.c citiesReader.c prim2.c
+//   icc -qopenmp -O2 -std=c99 -mkl main.c citiesReader.c prim2.c
+//   icc -qopenmp -O3 -std=c99 -mkl main.c citiesReader.c prim2.c
 //   gcc main.c citiesReader.c prim.c -lm
 
 // Execution:
@@ -9,8 +12,7 @@
 
 #include "citiesReader.h"
 #include "prim2.h"
-#include <time.h>       // for clock_t, clock(), CLOCKS_PER_SEC
-#include <unistd.h>
+#include <mkl.h>
 
 #include <stdlib.h>
 #include <stdbool.h>
@@ -30,7 +32,10 @@ int main() {
   int dep = 0;
 
   // if big cities only, minimal population is used for the sub cities
-  printf("Connect all cities of min pop : press 0; \nConnect all cities of min pop in a certain department : press 1;\nBig cities only : press 2\nFull connection of Big cities and also Departments of min pop : press 4\n");
+  printf("Connect all cities of min pop : press 0\n");
+  printf("Connect all cities of min pop in a certain department : press 1\n");
+  printf("Big cities only : press 2\n");
+  printf("Full connection of Big cities and also Departments of min pop : press 3\n");
   scanf("%i", &choice);
 
   
@@ -58,8 +63,7 @@ int main() {
     printf("Minimal population? ");
     scanf("%i", &popMin);
     cities = citiesReader(popMin, dep, false, 0,outputFile);
-    for (int i =0; i < cities->number; i++) 
-    {
+    for (int i =0; i < cities->number; i++){
       printf("CURRENT CITY  =====  %s %i %f %f %i\n", cities->name[i], cities->pop[i], cities->lon[i], cities->lat[i], cities->dep[i]);
     }
   }
@@ -74,16 +78,18 @@ int main() {
 
   if (choice == 0 || choice == 1 || choice == 2)
   {
-    // to store the execution time of code
-    double time_spent = 0.0;
-    clock_t begin = clock();
+    // Start CHRONO
+    const double timeBegin = dsecnd();
 
     int* parent = primalgo2(cities);
 
-    clock_t end = clock();
-    time_spent += (double)(end - begin) / CLOCKS_PER_SEC;
- 
-    printf("Total weight of the graph: %d\n", parent[0]);
+    // End CHRONO
+    const double timeEnd = dsecnd();
+    double timeTotal = timeEnd-timeBegin;
+
+    printf("\n\nThe elapsed time is %f seconds\n\n", timeTotal);
+    printf("Total weight of the tree: %d\n", parent[0]);
+    printf("Total number of cities: %d\n", cities->number);
     printf("___________________________________________\n");
 
     //-----------------------------------------------------------------
@@ -118,15 +124,21 @@ int main() {
   {
     printf("Minimal population? ");
     scanf("%i", &popMin);
-    printf("Choice 4\n");
+    printf("Choice 3\n");
     // lets do the big cities first 
     ListOfCities* cities = citiesReader(popMin, dep, true, 0, outputFile);  
     int nb_bigCities = cities->number;
+    
+    // Start CHRONO
+    const double timeBegin = dsecnd();
+
     int* parent = primalgo2(cities);
 
+    int totalWeight = parent[0];   // the weight of the entirety of the graph
+
  
-    printf("Total weight of the graph: %d\n", parent[0]);
-    printf("___________________________________________\n");
+    // printf("Total weight of the tree: %d\n", parent[0]);
+    // printf("___________________________________________\n");
 
     //-----------------------------------------------------------------
     //--- COMPUTING graph
@@ -153,19 +165,21 @@ int main() {
 
     // now lets run through each department
     int offset = nb_bigCities;
+    int total_nbCitites = 0;   // total number of cities used in the tree
 
-    for (int dep = 1; dep < 96; dep++)
-    {
-      if (dep != 20)
-      {
+    for (int dep = 1; dep < 96; dep++){
+      if (dep != 20){
         printf("DEPARTMENT : %i, current offset = %i\n\n", dep, offset);
         ListOfCities* cities = citiesReader(popMin, dep, false, offset, outputFile);  
         int nb_currDep = cities->number;
         int* parent = primalgo2(cities);
 
+        totalWeight += parent[0]; // adding the weight of each tree
+        total_nbCitites += cities->number;  // adding the number of cities in each departement
+
     
-        printf("Total weight of the graph: %d\n", parent[0]);
-        printf("___________________________________________");
+        // printf("Total weight of the tree: %d\n", parent[0]);
+        // printf("___________________________________________");
 
         //-----------------------------------------------------------------
         //--- COMPUTING graph
@@ -190,18 +204,17 @@ int main() {
         free(parent);
       }
     }
+
+    // End CHRONO after all the departement
+    const double timeEnd = dsecnd();
+    double timeTotal = timeEnd-timeBegin;
+
+    printf("\n\nThe elapsed time is %f seconds\n\n", timeTotal);
+    printf("Total weight of the tree: %d\n", totalWeight);
     
-
-
-
-
-
-
   }
   fclose(fileOut);
   fclose(outputFile);
-
-  
 
   return 0;
 }
