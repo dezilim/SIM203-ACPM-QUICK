@@ -1,6 +1,7 @@
 #ifndef CITIES_READER
 #define CITIES_READER
 #include <stdbool.h>
+#include <stdio.h>
 
 typedef struct ListOfCities ListOfCities;
 
@@ -14,6 +15,6 @@ struct ListOfCities
   int* dep;       // departement
 };
 
-ListOfCities* citiesReader(int popMin,int dep, bool bigOnly);
+ListOfCities* citiesReader(int popMin,int dep, bool bigOnly, int offset, FILE* outputFile);
 
 #endif

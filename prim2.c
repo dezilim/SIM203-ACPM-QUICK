@@ -108,14 +108,14 @@ int* primalgo2(ListOfCities* cities){
 
     for(int step = 0; step < V-1; step ++){
 
-        printf("Iteration: %d\nCurrent node: %d\n", step, currNode);
-        printf("Distance from current node list: ");
-        printList_float(distTo, V); 
-        printf("In Set list: ");
-        printList_bool(inSet, V);
-        printf("Parent list: ");
-        printList_int(parent, V); 
-        printf("--------------------------------------------\n");
+        // printf("Iteration: %d\nCurrent node: %d\n", step, currNode);
+        // printf("Distance from current node list: ");
+        // printList_float(distTo, V); 
+        // printf("In Set list: ");
+        // printList_bool(inSet, V);
+        // printf("Parent list: ");
+        // printList_int(parent, V); 
+        //printf("--------------------------------------------\n");
 
         // update current node and put it in the set
         currNode = minNodeIndex(distTo, inSet, V, INF);

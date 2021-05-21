@@ -6,7 +6,7 @@
 #include <string.h>
 
 
-ListOfCities* citiesReader(int popMin, int dep, bool bigOnly){
+ListOfCities* citiesReader(int popMin, int dep, bool bigOnly, int offset, FILE* outputFile){
 
   ListOfCities* cities = malloc(sizeof(*cities));
 
@@ -23,7 +23,7 @@ ListOfCities* citiesReader(int popMin, int dep, bool bigOnly){
     char line[512];
     const char s[2] = ",";
     char *token;
-
+    char *myName_check = malloc(32*sizeof(char)); 
 
     // Count the number of cities with population greater than or equal to 'popMin'
     cities->number = 0;
@@ -36,8 +36,15 @@ ListOfCities* citiesReader(int popMin, int dep, bool bigOnly){
       for(int i=0; i<1;  i++) token = strtok(NULL, s);
       int myDep = atof(token);
 
-      for(int i=0; i<13; i++) token = strtok(NULL, s);
+      for(int i=0; i<2;  i++) token = strtok(NULL, s);
+      strncpy(myName_check, token, 32);
+
+      for(int i=0; i<11; i++) token = strtok(NULL, s);
       int myPop = atoi(token);
+
+      //for(int i=0; i<5;  i++) token = strtok(NULL, s);
+      //float myLon = atof(token);
+
 
       if(bigOnly && myDep <= 95)
       {
@@ -47,7 +54,7 @@ ListOfCities* citiesReader(int popMin, int dep, bool bigOnly){
         }
         prevDep = myDep;
       }
-      else if( !bigOnly && (myPop >= popMin) && (((dep != 0) && (myDep == dep)) || (dep == 0)))
+      else if( !bigOnly && (myPop >= popMin) && (strcmp(myName_check, "Y") != 0) && (((dep != 0) && (myDep == dep)) || (dep == 0)))
       {
         // restrict only to the departments if dep is not null (0)
         cities->number++;
@@ -96,60 +103,6 @@ ListOfCities* citiesReader(int popMin, int dep, bool bigOnly){
       float myLat = atof(token);
 
       
-      
-      //if((myPop >= popMin) && (((dep != 0) && (myDep == dep)) || (dep == 0)))
-      //if(myPop >= popMin) 
-      /*
-      if(bigOnly && myDep <= 95)
-      {
-        if(myDep == prevDep)
-        {
-          // if you find a bigger ville, overwrite the data
-          if  (myPop > myPop_dep)
-          {
-            //printf("Prev big pop : %i, New big pop : %i\n", myPop_dep, myPop);
-            myPop_dep = myPop;
-            myLon_dep = myLon;
-            myLat_dep = myLat; 
-            myDep_dep = myDep;
-            //myName_dep = myName;
-            //printf("Biggest city : %s\n", myName_dep);
-            strncpy(myName_dep, myName, 32);
-            //printf("************************************\n");
-          }
-            
-
-          
-        }
-        // once we have finished running through the departments, store the max one 
-        else if(myDep != prevDep)
-        {
-          //printf("CHANGE DEPARTMENT ===========================\n\n");
-          // store the data of the previous dep we ran through
-          if (prevDep != 0)
-          {
-            cities->name[index] = (char*) malloc(32*sizeof(char));
-            strncpy(cities->name[index], myName_dep, 32);
-
-            cities->pop[index] = myPop_dep;
-            cities->lon[index] = myLon_dep;
-            cities->lat[index] = myLat_dep;
-            cities->dep[index] = myDep_dep;
-        
-            index++;     
-          }
-          // initialise the maximum population of the department as the first one 
-          myPop_dep = myPop;  
-          myLon_dep = myLon;
-          myLat_dep = myLat; 
-          myDep_dep = myDep; 
-          //myName_dep = myName;
-          strcpy(myName_dep, myName);
-
-        }
-
-        prevDep = myDep;
-      } */
 
       
       if(bigOnly && myDep <= 95)
@@ -172,9 +125,6 @@ ListOfCities* citiesReader(int popMin, int dep, bool bigOnly){
             strncpy(cities->name[index], myName, 32);
             //printf("************************************\n");
           }
-            
-
-          
         }
         // keep track of finishing running through a department. Begin with this, allocate space for name and initialise values
         else if(myDep != prevDep) 
@@ -193,8 +143,8 @@ ListOfCities* citiesReader(int popMin, int dep, bool bigOnly){
         
         prevDep = myDep;
       }
-      
-      else if(!bigOnly && (myPop >= popMin) && (((dep != 0) && (myDep == dep)) || (dep == 0))){
+      // default case with at least a min population. If dep was specified as 0, we take only cities from that department. 
+      else if(!bigOnly && (myPop >= popMin) && (strcmp(myName, "Y") != 0) && (((dep != 0) && (myDep == dep)) || (dep == 0))){
         cities->name[index] = (char*) malloc(32*sizeof(char));
         strncpy(cities->name[index], myName, 32);
         cities->pop[index] = myPop;
@@ -216,13 +166,12 @@ ListOfCities* citiesReader(int popMin, int dep, bool bigOnly){
 
   printf("== Writing cities with population >= %i in 'resuCities.dat' ==\n", popMin);
 
-  FILE* outputFile = NULL;
-  outputFile = fopen("resuCities.dat", "w");
+  
+
   if(outputFile != NULL){
-    for(int i=0; i<cities->number; i++){
+    for(int i = 0; i  < cities->number; i++){
       fprintf(outputFile, "%i %f %f %i\n", cities->pop[i], cities->lon[i], cities->lat[i], cities->dep[i]);
     }
-    fclose(outputFile);
   }
 
   return cities;
