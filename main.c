@@ -1,4 +1,4 @@
-// Compilation:
+// Compilation :
 //   icc -qopenmp -O0 -std=c99 -mkl main.c citiesReader.c prim2.c
 //   icc -qopenmp -O1 -std=c99 -mkl main.c citiesReader.c prim2.c
 //   icc -qopenmp -O2 -std=c99 -mkl main.c citiesReader.c prim2.c
@@ -8,6 +8,9 @@
 // Execution:
 //   ./a.out
 //   ./a.exe
+
+// Pour la visualisation :
+// python ./visualisation.py
 
 
 #include "citiesReader.h"
@@ -136,10 +139,6 @@ int main() {
 
     int totalWeight = parent[0];   // the weight of the entirety of the graph
 
- 
-    // printf("Total weight of the tree: %d\n", parent[0]);
-    // printf("___________________________________________\n");
-
     //-----------------------------------------------------------------
     //--- COMPUTING graph
     //-----------------------------------------------------------------
@@ -177,9 +176,6 @@ int main() {
         totalWeight += parent[0]; // adding the weight of each tree
         total_nbCitites += cities->number;  // adding the number of cities in each departement
 
-    
-        // printf("Total weight of the tree: %d\n", parent[0]);
-        // printf("___________________________________________");
 
         //-----------------------------------------------------------------
         //--- COMPUTING graph

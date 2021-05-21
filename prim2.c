@@ -83,9 +83,6 @@ int* primalgo2(ListOfCities* cities){
     int currNode;
     float INF = 99999.;
 
-
-    //int graph[V][V] = {{0,2,0,6,0},{2,0,3,8,5},{0,3,0,0,7},{6,8,0,0,9},{0,5,7,9,0}};
-
     //Initialise set to contain just the first node
     for (int i = 0; i < V; i++){   
         inSet[i] = false;
@@ -109,15 +106,6 @@ int* primalgo2(ListOfCities* cities){
 
     for(int step = 0; step < V-1; step ++){
 
-        // printf("Iteration: %d\nCurrent node: %d\n", step, currNode);
-        // printf("Distance from current node list: ");
-        // printList_float(distTo, V); 
-        // printf("In Set list: ");
-        // printList_bool(inSet, V);
-        // printf("Parent list: ");
-        // printList_int(parent, V); 
-        //printf("--------------------------------------------\n");
-
         // update current node and put it in the set
         currNode = minNodeIndex(distTo, inSet, V, INF);
         inSet[currNode] = true;
@@ -134,14 +122,6 @@ int* primalgo2(ListOfCities* cities){
 
         
     }
-
-    // printf("\n___________End of Prim's Algorithm___________ \n"); 
-    // printf("Result:\n");
-    // printf("Parent ----- Distance ------- City\n");
-
-    // for(int v = 1; v< V; v++){
-    //     printf("[%d] ------- %f ------- [%d]\n", parent[v], x_ij(cities, v, parent[v]), v);
-    // }
 
     // parent[0] is not used since the first node has no parent! Use it to store the total weight of the reslut :-)
     for(int v = 0; v < V; v++){

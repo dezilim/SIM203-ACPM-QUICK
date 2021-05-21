@@ -42,9 +42,6 @@ ListOfCities* citiesReader(int popMin, int dep, bool bigOnly, int offset, FILE* 
       for(int i=0; i<11; i++) token = strtok(NULL, s);
       int myPop = atoi(token);
 
-      //for(int i=0; i<5;  i++) token = strtok(NULL, s);
-      //float myLon = atof(token);
-
 
       if(bigOnly && myDep <= 95)
       {
@@ -58,12 +55,10 @@ ListOfCities* citiesReader(int popMin, int dep, bool bigOnly, int offset, FILE* 
       {
         // restrict only to the departments if dep is not null (0)
         cities->number++;
-        //cities->dep[index] = myDep;
       }
     } 
     fseek(inputFile, 0, SEEK_SET);
     // expect 94 total cities since department 20 is excluded 
-    //printf("JUUST CHECKKKING , CITIES NUMBER : = %i\n\n\n", cities->number);
 
     // Allocate arrays
     cities->name = malloc(cities->number*sizeof(char*));
@@ -116,14 +111,11 @@ ListOfCities* citiesReader(int popMin, int dep, bool bigOnly, int offset, FILE* 
           // if you find a bigger ville, overwrite the data
           if  (myPop > cities->pop[index])
           {
-            //printf("Prev big pop : %i, New big pop : %i\n", myPop_dep, myPop);
             cities->pop[index] = myPop;
             cities->lon[index] = myLon;
             cities->lat[index] = myLat;
             cities->dep[index] = myDep;
-            //printf("Biggest city : %s\n", myName_dep);
             strncpy(cities->name[index], myName, 32);
-            //printf("************************************\n");
           }
         }
         // keep track of finishing running through a department. Begin with this, allocate space for name and initialise values
